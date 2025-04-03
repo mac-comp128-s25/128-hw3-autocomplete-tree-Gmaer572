@@ -1,6 +1,7 @@
 package autoComplete;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -25,7 +26,7 @@ public class PrefixTree {
      */
     public void add(String word){
         int index = 0;
-        if (!contains(word)){
+        //if (!contains(word)){
             while (index < word.length()){
                 char currentChar = word.charAt(index);
                 TreeNode currentNode = new TreeNode();
@@ -34,8 +35,11 @@ public class PrefixTree {
                 if (index == word.length()-1){
                     currentNode.isWord = true;
                 }
+                
+                index++;
             }
-        }
+            size++;
+        //}
     }
 
     /**
@@ -44,7 +48,7 @@ public class PrefixTree {
      * @return true if contained in the tree.
      */
     public boolean contains(String word){
-        //TODO: complete me
+
         return false;
     }
 
