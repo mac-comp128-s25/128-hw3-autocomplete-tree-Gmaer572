@@ -1,7 +1,9 @@
 package autoComplete;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A prefix tree used for autocompletion. The root of the tree just stores links to child nodes (up to 26, one per letter).
@@ -24,7 +26,28 @@ public class PrefixTree {
      * @param word
      */
     public void add(String word){
-        //TODO: complete me
+        int index = 0;
+        TreeNode currentParent = root;
+        if (!contains(word)){
+            while (index < word.length()){
+                Character currentChar = word.charAt(index);
+                if (!currentParent.children.containsKey(currentChar)){
+                    TreeNode currentNode = new TreeNode();
+                    currentNode.letter = currentChar;
+                    currentParent.children.put(currentChar, currentNode);
+                    currentParent = currentNode;
+                    if (index == word.length()-1){
+                        currentNode.isWord = true;
+                    }     
+                    
+                }
+                else {
+                    currentParent = currentParent.children.get(currentChar);
+                }
+                index++;
+            }
+            size++;
+        }
     }
 
     /**
@@ -33,7 +56,37 @@ public class PrefixTree {
      * @return true if contained in the tree.
      */
     public boolean contains(String word){
-        //TODO: complete me
+        char currentLetter;
+        char currentChar;
+        TreeNode currentParent = root;
+        boolean cancel = false;
+        int index = 0;
+        Set<Character> charSet = currentParent.children.keySet();
+        Iterator<Character> it;
+        if (charSet.size() > 0){
+            while (cancel == false && index <= word.length()-1 ){
+                currentLetter = word.charAt(index);
+                charSet = currentParent.children.keySet();
+                if (charSet.size() == 0){
+                    return false;
+                }
+                it = charSet.iterator();
+                cancel = true;
+                while (it.hasNext()){
+                    
+                    Character currentParentChar = it.next();
+                    if (currentParentChar.equals(currentLetter)){
+                        currentParent = currentParent.children.get(currentParentChar); 
+                        cancel = false;
+                        break;
+                    }
+                }
+                if (currentParent.isWord == true && index == word.length()-1){
+                    return true;
+                }
+                index++;
+            }
+        }
         return false;
     }
 
