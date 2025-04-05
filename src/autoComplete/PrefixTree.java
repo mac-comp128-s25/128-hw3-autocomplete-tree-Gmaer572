@@ -57,7 +57,6 @@ public class PrefixTree {
      */
     public boolean contains(String word){
         char currentLetter;
-        char currentChar;
         TreeNode currentParent = root;
         boolean cancel = false;
         int index = 0;
@@ -73,7 +72,6 @@ public class PrefixTree {
                 it = charSet.iterator();
                 cancel = true;
                 while (it.hasNext()){
-                    
                     Character currentParentChar = it.next();
                     if (currentParentChar.equals(currentLetter)){
                         currentParent = currentParent.children.get(currentParentChar); 
@@ -81,7 +79,8 @@ public class PrefixTree {
                         break;
                     }
                 }
-                if (currentParent.isWord == true && index == word.length()-1){
+                Character currentParentCharCasted = (Character) currentParent.letter;
+                if (currentParent.isWord == true && index == word.length()-1 && currentParentCharCasted.equals(currentLetter)){
                     return true;
                 }
                 index++;
@@ -97,10 +96,68 @@ public class PrefixTree {
      * @return list of words with prefix
      */
     public ArrayList<String> getWordsForPrefix(String prefix){
-        //TODO: complete me
-        return null;
+        ArrayList<String> wordList = new ArrayList<String>();
+        char currentLetter;
+        TreeNode currentParent = root;
+        TreeNode prefixParent = new TreeNode();
+        boolean cancel = false;
+        int index = 0;
+        Set<Character> charSet = currentParent.children.keySet();
+        Iterator<Character> it;
+        if (charSet.size() > 0){
+            while (cancel == false && index <= prefix.length()-1 ){
+                currentLetter = prefix.charAt(index);
+                charSet = currentParent.children.keySet();
+                it = charSet.iterator();
+                cancel = true;
+                while (it.hasNext()){
+                    Character currentParentChar = it.next();
+                    if (currentParentChar.equals(currentLetter)){
+                        currentParent = currentParent.children.get(currentParentChar); 
+                        cancel = false;
+                        break;
+                    }
+                }
+                if (index == prefix.length()-1){
+                    prefixParent = currentParent;
+                }
+                index++;
+            }
+        }
+        return prefixTraversal(prefixParent, prefix, wordList, true);
     }
 
+    /**
+     * Helper method for getWordsForPrefix to traverse all the subtrees of the prefix.
+     * @return a recursive call, or a list of words with the prefix.
+     */
+    private ArrayList<String> prefixTraversal(TreeNode localRoot, String currentPrefix, ArrayList<String> wordList, boolean baseCase){
+        if (localRoot == null){
+            return wordList;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(currentPrefix); 
+        char currentLetter = localRoot.letter;
+        if (!baseCase){
+            sb.append(localRoot.letter);
+        }
+        Iterator<Character> it = localRoot.children.keySet().iterator();
+        while (it.hasNext()){
+            char currentChar = it.next();
+            TreeNode currentChild = localRoot.children.get(currentChar);
+            String currentPrefixForCall = sb.toString();
+            prefixTraversal(currentChild, currentPrefixForCall, wordList, false);
+
+        }
+        if (localRoot.isWord){
+            wordList.add(sb.toString());
+        }
+        if (baseCase){
+            return wordList;
+        }
+        return null;
+
+    }
     /**
      * @return the number of words in the tree
      */
