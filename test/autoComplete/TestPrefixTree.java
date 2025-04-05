@@ -1,6 +1,8 @@
 package autoComplete;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -51,6 +53,26 @@ public class TestPrefixTree {
         assertTrue(tree.contains("possum"));
         assertEquals(10, tree.size());
     }
+    /**
+     * Tests an edge case I found with the "compute" prefix, which only returned "compute" and "computed" despite
+     * "computes" and "computer" also being in the dictionary.
+     * It's fixed now. Obviously.
+     */
+    @Test
+    public void testComputes(){
+        PrefixTree tree = new PrefixTree();
+        tree.add("compute");
+        tree.add("computed");
+        tree.add("computer");
+        tree.add("computes");
+        ArrayList<String> result = tree.getWordsForPrefix("comput");
+        System.out.println(result.toString());
+        assertEquals(4, result.size());
+        assertTrue(result.contains("compute"));
+        assertTrue(result.contains("computes"));
+        assertTrue(result.contains("computed"));
+        assertTrue(result.contains("computer"));
+    }
 
     @Test
     public void testPrefix(){
@@ -67,6 +89,7 @@ public class TestPrefixTree {
         tree.add("possum");
         tree.add("pot");
         ArrayList<String> result = tree.getWordsForPrefix("pot");
+        System.out.println(result.toString());
         assertEquals(3, result.size());
         assertTrue(result.contains("pot"));
         assertTrue(result.contains("pottery"));
